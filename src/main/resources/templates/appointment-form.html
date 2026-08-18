@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit} ? 'Edit Appointment - Sunrise Dental' : 'New Appointment - Sunrise Dental'">Appointment Form - Sunrise Dental Clinic</title>
+    <meta name="description" content="Schedule or edit a dental clinic appointment at Sunrise Dental.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1"></div>
+    <div class="background-glob glob-2"></div>
+
+    <div class="app-container">
+        <header class="navbar">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/patients" class="nav-link">Patients</a>
+                <a href="/appointments" class="nav-link active">Appointments</a>
+            </nav>
+            <div class="user-profile-nav">
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-sm btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-header-left">
+                    <h1 th:text="${isEdit} ? 'Edit Appointment' : 'New Appointment'">Appointment</h1>
+                    <p class="subtitle" th:text="${isEdit} ? ('Editing appointment: ' + appointmentNumber) : 'Schedule a new dental appointment'">Schedule</p>
+                </div>
+                <div class="page-header-actions">
+                    <a href="/appointments" class="btn btn-secondary">← Back to Appointments</a>
+                </div>
+            </div>
+
+<!-- Error Message -->
+<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+<!-- Appointment Form -->
+<div class="glass-card form-container">
+    <form th:action="${isEdit} ? @{/appointments/{id}/edit(id=${appointmentId})} : @{/appointments/new}"
+          th:object="${appointmentForm}" method="post" id="appointment-form" novalidate>
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <!-- Validation Summary -->
+        <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+            Please fix the validation errors below.
+        </div>
+
+                    <div class="form-grid">
+                        <!-- Patient Selection -->
+                        <div class="form-group">
+                            <label for="patientId" class="form-label">Patient <span class="required">*</span></label>
+                            <select id="patientId" th:field="*{patientId}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('patientId')} ? 'input-error' : ''" required>
+                                <option value="">-- Select Patient --</option>
+                                <option th:each="patient : ${patients}"
+                                        th:value="${patient.id}"
+                                        th:text="${patient.patientNumber + ' - ' + patient.fullName}">Patient</option>
+                            </select>
+                            <span th:if="${#fields.hasErrors('patientId')}" class="field-error" th:errors="*{patientId}"></span>
+                        </div>
+
+                        <!-- Dentist Selection -->
+                        <div class="form-group">
+                            <label for="dentistId" class="form-label">Dentist <span class="required">*</span></label>
+                            <select id="dentistId" th:field="*{dentistId}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('dentistId')} ? 'input-error' : ''" required>
+                                <option value="">-- Select Dentist --</option>
+                                <option th:each="dentist : ${dentists}"
+                                        th:value="${dentist.id}"
+                                        th:text="${dentist.fullName + ' (' + dentist.specialization + ')'}">Dentist</option>
+                            </select>
+                            <span th:if="${#fields.hasErrors('dentistId')}" class="field-error" th:errors="*{dentistId}"></span>
+                        </div>
+
+                        <!-- Treatment Selection -->
+                        <div class="form-group">
+                            <label for="treatmentId" class="form-label">Treatment <span class="required">*</span></label>
+                            <select id="treatmentId" th:field="*{treatmentId}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('treatmentId')} ? 'input-error' : ''" required>
+                                <option value="">-- Select Treatment --</option>
+                                <option th:each="treatment : ${treatments}"
+                                        th:value="${treatment.id}"
+                                        th:text="${treatment.treatmentName + ' (LKR ' + treatment.treatmentCost + ')'}">Treatment</option>
+                            </select>
+                            <span th:if="${#fields.hasErrors('treatmentId')}" class="field-error" th:errors="*{treatmentId}"></span>
+                        </div>
+
+                        <!-- Status (only on edit) -->
+                        <div class="form-group" th:if="${isEdit}">
+                            <label for="status" class="form-label">Status <span class="required">*</span></label>
+                            <select id="status" th:field="*{status}" class="form-control">
+                                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}">STATUS</option>
+                            </select>
+                        </div>
+
+                        <!-- Appointment Date -->
+                        <div class="form-group">
+                            <label for="appointmentDate" class="form-label">Appointment Date <span class="required">*</span></label>
+                            <input type="date" id="appointmentDate" th:field="*{appointmentDate}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('appointmentDate')} ? 'input-error' : ''"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
+                            <span th:if="${#fields.hasErrors('appointmentDate')}" class="field-error" th:errors="*{appointmentDate}"></span>
+                        </div>
+
+                        <!-- Appointment Time -->
+                        <div class="form-group">
+                            <label for="appointmentTime" class="form-label">Appointment Time <span class="required">*</span></label>
+                            <input type="time" id="appointmentTime" th:field="*{appointmentTime}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('appointmentTime')} ? 'input-error' : ''" required>
+                            <span th:if="${#fields.hasErrors('appointmentTime')}" class="field-error" th:errors="*{appointmentTime}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label for="notes" class="form-label">Notes (Optional)</label>
+                        <textarea id="notes" th:field="*{notes}" class="form-control textarea-control"
+                                  placeholder="Any additional notes for this appointment..."
+                                  rows="3" maxlength="500"></textarea>
+                        <span th:if="${#fields.hasErrors('notes')}" class="field-error" th:errors="*{notes}"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="btn-save-appointment"
+                                th:text="${isEdit} ? 'Update Appointment' : 'Book Appointment'">Save</button>
+                        <a href="/appointments" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+</body>
+</html>

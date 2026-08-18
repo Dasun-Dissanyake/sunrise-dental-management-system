@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${patient.fullName + ' - Patient Record'}">Patient Detail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1"></div>
+    <div class="background-glob glob-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="navbar">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/patients" class="active">Patients</a>
+            </nav>
+            <div class="user-profile-nav">
+                <span class="user-greeting">
+                    Logged in as: <strong th:text="${user.fullName != null && !user.fullName.isBlank() ? user.fullName : user.username}">User</strong>
+                </span>
+                <span class="role-pill" th:text="${user.role}">ROLE</span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-sm btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Main Detail Card -->
+        <main class="main-content flex-column">
+            <!-- Flash Message Banner -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <span class="alert-icon">✓</span>
+                <span th:text="${successMessage}">Operation completed successfully.</span>
+            </div>
+
+            <div class="detail-card glass-card">
+                <div class="detail-header-row">
+                    <div>
+                        <span class="patient-id-badge" th:text="${patient.patientNumber}">PAT-000001</span>
+                        <h1 th:text="${patient.fullName}">Patient Name</h1>
+                    </div>
+                    <div>
+                        <span th:if="${patient.active}" class="status-pill active-pill">Active Record</span>
+                        <span th:unless="${patient.active}" class="status-pill inactive-pill">Deactivated Record</span>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Patient Number</span>
+                        <span class="detail-value" th:text="${patient.patientNumber}">PAT-000001</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Full Name</span>
+                        <span class="detail-value" th:text="${patient.fullName}">John Doe</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Contact Number</span>
+                        <span class="detail-value" th:text="${patient.contactNumber}">0771234567</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Email Address</span>
+                        <span class="detail-value" th:text="${patient.email != null && !patient.email.isBlank() ? patient.email : 'Not Provided'}">john@example.com</span>
+                    </div>
+
+                    <div class="detail-item full-width">
+                        <span class="detail-label">Address</span>
+                        <span class="detail-value" th:text="${patient.address}">123 Main St</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Date of Birth</span>
+                        <span class="detail-value" th:text="${patient.dateOfBirth != null ? patient.dateOfBirth : 'Not Specified'}">1990-01-01</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Gender</span>
+                        <span class="detail-value" th:text="${patient.gender != null && !patient.gender.isBlank() ? patient.gender : 'Not Specified'}">Male</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Registration Date</span>
+                        <span class="detail-value" th:text="${#temporals.format(patient.registrationDate, 'yyyy-MM-dd HH:mm')}">2026-08-18</span>
+                    </div>
+                </div>
+
+                <div class="detail-actions-row">
+                    <a href="/patients" class="btn btn-secondary">← Back to Patient List</a>
+                    <div sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')" class="action-buttons-group">
+                        <a th:href="@{/patients/{id}/edit(id=${patient.id})}" class="btn btn-primary">Edit Profile</a>
+                        <form th:if="${patient.active}" th:action="@{/patients/{id}/deactivate(id=${patient.id})}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to deactivate this patient record?');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-logout">Deactivate Record</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+</body>
+</html>

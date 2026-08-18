@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Appointment ' + ${appointment.appointmentNumber} + ' - Sunrise Dental'">Appointment Detail - Sunrise Dental</title>
+    <meta name="description" content="Detailed appointment information for Sunrise Dental Clinic.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1"></div>
+    <div class="background-glob glob-2"></div>
+
+    <div class="app-container">
+        <header class="navbar">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/patients" class="nav-link">Patients</a>
+                <a href="/appointments" class="nav-link active">Appointments</a>
+            </nav>
+            <div class="user-profile-nav">
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-sm btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-header-left">
+                    <h1 th:text="'Appointment ' + ${appointment.appointmentNumber}">Appointment</h1>
+                    <span class="status-badge"
+                          th:classappend="${appointment.status.name() == 'SCHEDULED'} ? 'status-scheduled' :
+                                          (${appointment.status.name() == 'COMPLETED'} ? 'status-completed' :
+                                          (${appointment.status.name() == 'CANCELLED'} ? 'status-cancelled' : 'status-no-show'))"
+                          th:text="${appointment.status}">SCHEDULED</span>
+                </div>
+                <div class="page-header-actions">
+                    <a href="/appointments" class="btn btn-secondary">← Back to Appointments</a>
+                    <a th:href="@{/appointments/{id}/edit(id=${appointment.id})}"
+                       class="btn btn-primary"
+                       sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')"
+                       th:if="${appointment.status.name() == 'SCHEDULED'}"
+                       id="btn-edit-appointment">Edit</a>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <div class="detail-grid">
+                <!-- Patient Info -->
+                <div class="glass-card detail-card">
+                    <div class="detail-card-header">
+                        <span class="detail-card-icon">👤</span>
+                        <h2>Patient</h2>
+                    </div>
+                    <div class="detail-items">
+                        <div class="detail-item">
+                            <span class="detail-label">Patient Number</span>
+                            <span class="detail-value" th:text="${appointment.patientNumber}">PAT-000001</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Full Name</span>
+                            <span class="detail-value" th:text="${appointment.patientName}">John Doe</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Contact</span>
+                            <span class="detail-value" th:text="${appointment.patientContact}">0771234567</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dentist Info -->
+                <div class="glass-card detail-card">
+                    <div class="detail-card-header">
+                        <span class="detail-card-icon">👨‍⚕️</span>
+                        <h2>Dentist</h2>
+                    </div>
+                    <div class="detail-items">
+                        <div class="detail-item">
+                            <span class="detail-label">Dentist Number</span>
+                            <span class="detail-value" th:text="${appointment.dentistNumber}">DENT-000001</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Full Name</span>
+                            <span class="detail-value" th:text="${appointment.dentistName}">Dr. Perera</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Specialization</span>
+                            <span class="detail-value" th:text="${appointment.dentistSpecialization}">General Dentistry</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treatment Info -->
+                <div class="glass-card detail-card">
+                    <div class="detail-card-header">
+                        <span class="detail-card-icon">🦷</span>
+                        <h2>Treatment</h2>
+                    </div>
+                    <div class="detail-items">
+                        <div class="detail-item">
+                            <span class="detail-label">Treatment Code</span>
+                            <span class="detail-value" th:text="${appointment.treatmentCode}">TRT-001</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Treatment Name</span>
+                            <span class="detail-value" th:text="${appointment.treatmentName}">Routine Checkup</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Treatment Cost</span>
+                            <span class="detail-value" th:text="'LKR ' + ${appointment.treatmentCost}">LKR 500.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Consultation Fee</span>
+                            <span class="detail-value" th:text="'LKR ' + ${appointment.consultationFee}">LKR 200.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Info -->
+                <div class="glass-card detail-card">
+                    <div class="detail-card-header">
+                        <span class="detail-card-icon">📅</span>
+                        <h2>Appointment Details</h2>
+                    </div>
+                    <div class="detail-items">
+                        <div class="detail-item">
+                            <span class="detail-label">Appointment Number</span>
+                            <span class="detail-value" th:text="${appointment.appointmentNumber}">APT-000001</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value" th:text="${appointment.appointmentDate}">2026-01-01</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Time</span>
+                            <span class="detail-value" th:text="${appointment.appointmentTime}">09:00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="status-badge"
+                                  th:classappend="${appointment.status.name() == 'SCHEDULED'} ? 'status-scheduled' :
+                                                  (${appointment.status.name() == 'COMPLETED'} ? 'status-completed' :
+                                                  (${appointment.status.name() == 'CANCELLED'} ? 'status-cancelled' : 'status-no-show'))"
+                                  th:text="${appointment.status}">SCHEDULED</span>
+                        </div>
+                        <div class="detail-item" th:if="${appointment.notes != null && !appointment.notes.isBlank()}">
+                            <span class="detail-label">Notes</span>
+                            <span class="detail-value" th:text="${appointment.notes}">No notes</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Created At</span>
+                            <span class="detail-value" th:text="${appointment.createdAt}">2026-01-01</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Update Form -->
+            <div class="glass-card" style="margin-top: 1.5rem;" sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                <h2 style="margin-bottom: 1rem; font-size: 1.1rem; opacity: 0.9;">Update Status</h2>
+                <form th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" class="status-update-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <select name="status" class="form-control" id="status-select">
+                                <option th:each="s : ${statuses}"
+                                        th:value="${s}"
+                                        th:text="${s}"
+                                        th:selected="${s == appointment.status}">STATUS</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <input type="text" name="notes" class="form-control" id="status-notes"
+                                   placeholder="Optional notes for this status change..."
+                                   maxlength="500">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btn-update-status">Update Status</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+</body>
+</html>

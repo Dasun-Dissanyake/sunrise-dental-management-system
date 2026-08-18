@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${appName}">Sunrise Dental Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1"></div>
+    <div class="background-glob glob-2"></div>
+
+    <div class="app-container">
+        <!-- Header / Navigation -->
+        <header class="navbar">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/" class="active">Dashboard</a>
+                <a href="/api/v1/health" target="_blank" class="badge-link">REST API Health</a>
+            </nav>
+        </header>
+
+        <!-- Main Hero Card -->
+        <main class="main-content">
+            <div class="card glass-card">
+                <div class="status-badge" th:text="${systemStatus}">Foundation Ready</div>
+                <h1 th:text="${welcomeMessage}">Welcome to Sunrise Dental Clinic</h1>
+                <p class="subtitle">
+                    Distributed Dental Management System constructed with Java 21, Spring Boot, MySQL, JPA Hibernate, and RESTful Web Services.
+                </p>
+
+                <div class="architecture-grid">
+                    <div class="arch-box">
+                        <div class="arch-icon">🏛️</div>
+                        <h3>Layered Architecture</h3>
+                        <p>Controller → Service → Repository → Entity separation of concerns</p>
+                    </div>
+                    <div class="arch-box">
+                        <div class="arch-icon">🌐</div>
+                        <h3>Distributed REST APIs</h3>
+                        <p>Web service endpoints ready for cross-platform clients</p>
+                    </div>
+                    <div class="arch-box">
+                        <div class="arch-icon">🛡️</div>
+                        <h3>Security & Validation</h3>
+                        <p>Spring Security 6 and Jakarta Bean Validation integrated</p>
+                    </div>
+                    <div class="arch-box">
+                        <div class="arch-icon">💾</div>
+                        <h3>MySQL Database</h3>
+                        <p>Spring Data JPA & Hibernate ORM configuration</p>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <a href="/api/v1/health" class="btn btn-primary" target="_blank">
+                        Test Web Service Endpoint (/api/v1/health)
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+</body>
+</html>
