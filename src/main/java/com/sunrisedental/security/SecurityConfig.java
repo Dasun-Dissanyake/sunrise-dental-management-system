@@ -67,8 +67,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/dentists/**").hasAnyRole("ADMIN", "RECEPTIONIST", "DENTIST")
                 .requestMatchers("/api/v1/dentists/**").hasAnyRole("ADMIN", "RECEPTIONIST")
                 // Treatment catalog (read-only for all roles)
-                .requestMatchers(HttpMethod.GET, "/api/v1/treatments/**").hasAnyRole("ADMIN", "RECEPTIONIST", "DENTIST")
-                .requestMatchers("/api/v1/treatments/**").hasAnyRole("ADMIN", "RECEPTIONIST")
+                .requestMatchers(HttpMethod.GET, "/treatments/**", "/api/v1/treatments/**").hasAnyRole("ADMIN", "RECEPTIONIST", "DENTIST")
+                .requestMatchers("/treatments/**", "/api/v1/treatments/**").hasAnyRole("ADMIN", "RECEPTIONIST")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
