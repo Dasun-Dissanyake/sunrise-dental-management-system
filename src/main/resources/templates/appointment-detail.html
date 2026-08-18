@@ -24,6 +24,7 @@
                 <a href="/dashboard" class="nav-link">Dashboard</a>
                 <a href="/patients" class="nav-link">Patients</a>
                 <a href="/appointments" class="nav-link active">Appointments</a>
+                <a href="/bills" class="nav-link">Billing</a>
             </nav>
             <div class="user-profile-nav">
                 <form th:action="@{/logout}" method="post" style="display: inline;">
@@ -45,6 +46,15 @@
                 </div>
                 <div class="page-header-actions">
                     <a href="/appointments" class="btn btn-secondary">← Back to Appointments</a>
+
+                    <!-- Billing Actions -->
+                    <a th:if="${hasBill}" th:href="@{/bills/receipt/{id}(id=${billId})}" class="btn btn-outline" id="btn-view-receipt">📄 View Receipt</a>
+
+                    <form th:if="${!hasBill}" th:action="@{/bills/generate/{id}(id=${appointment.id})}" method="post" style="display:inline;" sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-primary" id="btn-generate-bill">🧾 Generate Bill</button>
+                    </form>
+
                     <a th:href="@{/appointments/{id}/edit(id=${appointment.id})}"
                        class="btn btn-primary"
                        sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')"

@@ -60,6 +60,9 @@ public class SecurityConfig {
                 // Appointment management
                 .requestMatchers(HttpMethod.GET, "/appointments/**", "/api/v1/appointments/**").hasAnyRole("ADMIN", "RECEPTIONIST", "DENTIST")
                 .requestMatchers("/appointments/**", "/api/v1/appointments/**").hasAnyRole("ADMIN", "RECEPTIONIST")
+                // Billing and receipt management
+                .requestMatchers(HttpMethod.GET, "/bills/**", "/api/v1/bills/**").hasAnyRole("ADMIN", "RECEPTIONIST", "DENTIST")
+                .requestMatchers("/bills/**", "/api/v1/bills/**").hasAnyRole("ADMIN", "RECEPTIONIST")
                 // Dentist catalog (read-only for all roles)
                 .requestMatchers(HttpMethod.GET, "/api/v1/dentists/**").hasAnyRole("ADMIN", "RECEPTIONIST", "DENTIST")
                 .requestMatchers("/api/v1/dentists/**").hasAnyRole("ADMIN", "RECEPTIONIST")

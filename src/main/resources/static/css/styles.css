@@ -870,3 +870,188 @@ select.form-control option {
     font-size: 0.95rem;
     margin-top: 0.25rem;
 }
+
+/* ============================================
+   Phase 4: Billing & Print Receipt Styles
+   ============================================ */
+
+.receipt-card {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+}
+
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.clinic-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.receipt-logo {
+    font-size: 2.2rem;
+}
+
+.clinic-brand h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--primary);
+}
+
+.receipt-meta {
+    text-align: right;
+}
+
+.receipt-number-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+}
+
+.receipt-number-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.receipt-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.receipt-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1.5rem 0;
+}
+
+.receipt-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.receipt-section h4 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.receipt-section p {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+
+.receipt-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.receipt-breakdown-table th, .receipt-breakdown-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.receipt-breakdown-table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.total-row td {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+    border-top: 2px solid var(--primary);
+    border-bottom: none;
+    padding-top: 1rem;
+}
+
+.receipt-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.receipt-footer-sub {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    .no-print, .navbar, .footer, .page-header, .background-glob, button, .btn {
+        display: none !important;
+    }
+
+    .app-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .main-content {
+        padding: 0 !important;
+    }
+
+    .glass-card, .receipt-card {
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        border: 1px solid #cccccc !important;
+        border-radius: 0 !important;
+        padding: 2rem !important;
+    }
+
+    .clinic-brand h2 {
+        color: #000000 !important;
+    }
+
+    .receipt-number-value {
+        color: #000000 !important;
+    }
+
+    .total-row td {
+        color: #000000 !important;
+        border-top: 2px solid #000000 !important;
+    }
+
+    .receipt-breakdown-table th, .receipt-breakdown-table td {
+        border-bottom: 1px solid #dddddd !important;
+        color: #000000 !important;
+    }
+
+    .receipt-divider {
+        background: #dddddd !important;
+    }
+}
+

@@ -28,15 +28,18 @@ public class WebAppointmentController {
     private final PatientService patientService;
     private final DentistService dentistService;
     private final TreatmentService treatmentService;
+    private final com.sunrisedental.service.BillService billService;
 
     public WebAppointmentController(AppointmentService appointmentService,
                                      PatientService patientService,
                                      DentistService dentistService,
-                                     TreatmentService treatmentService) {
+                                     TreatmentService treatmentService,
+                                     com.sunrisedental.service.BillService billService) {
         this.appointmentService = appointmentService;
         this.patientService = patientService;
         this.dentistService = dentistService;
         this.treatmentService = treatmentService;
+        this.billService = billService;
     }
 
     @GetMapping
@@ -104,6 +107,16 @@ public class WebAppointmentController {
             AppointmentResponse appointment = appointmentService.getAppointmentById(id);
             model.addAttribute("appointment", appointment);
             model.addAttribute("statuses", AppointmentStatus.values());
+
+            try {
+                com.sunrisedental.dto.BillResponse bill = billService.getBillByAppointmentId(id);
+                model.addAttribute("hasBill", true);
+                model.addAttribute("billId", bill.getId());
+                model.addAttribute("billNumber", bill.getBillNumber());
+            } catch (Exception e) {
+                model.addAttribute("hasBill", false);
+            }
+
             return "appointment-detail";
         } catch (CustomApiException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

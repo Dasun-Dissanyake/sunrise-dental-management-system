@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Management - Sunrise Dental Clinic</title>
+    <meta name="description" content="View and manage patient billing records and receipts at Sunrise Dental Clinic.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1"></div>
+    <div class="background-glob glob-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="navbar">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/patients" class="nav-link">Patients</a>
+                <a href="/appointments" class="nav-link">Appointments</a>
+                <a href="/bills" class="nav-link active">Billing</a>
+            </nav>
+            <div class="user-profile-nav">
+                <span class="role-pill" sec:authentication="principal.authorities">ROLE</span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-sm btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-header-left">
+                    <h1>Billing Management</h1>
+                    <p class="subtitle">View and manage clinic patient billing records and receipts</p>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <!-- Bills Table & Records -->
+            <div class="glass-card table-container">
+                <!-- Empty State -->
+                <div th:if="${bills.empty}" class="empty-table-msg" style="text-align: center; padding: 3rem 1rem;">
+                    <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🧾</span>
+                    <h3 style="margin-bottom: 0.5rem; font-weight: 600;">No bills have been generated yet.</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Generate bills directly from patient appointment detail pages.</p>
+                    <a href="/appointments" class="btn btn-primary" id="btn-view-appointments">View Appointments</a>
+                </div>
+
+                <!-- Bills Data Table -->
+                <table th:if="${!bills.empty}" class="data-table" id="bills-table">
+                    <thead>
+                        <tr>
+                            <th>Bill No.</th>
+                            <th>Patient Name</th>
+                            <th>Apt. Date &amp; Time</th>
+                            <th>Treatment</th>
+                            <th class="text-right">Treatment Cost</th>
+                            <th class="text-right">Consultation Fee</th>
+                            <th class="text-right">Total Amount</th>
+                            <th>Bill Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="b : ${bills}">
+                            <td>
+                                <a th:href="@{/bills/receipt/{id}(id=${b.id})}" class="table-link" th:text="${b.billNumber}">REC-000001</a>
+                            </td>
+                            <td th:text="${b.patientName}">John Doe</td>
+                            <td th:text="${b.appointmentDate} + ' ' + ${b.appointmentTime}">2026-08-18 09:00</td>
+                            <td th:text="${b.treatmentName}">Routine Checkup</td>
+                            <td class="text-right" th:text="'LKR ' + ${#numbers.formatDecimal(b.treatmentCost, 1, 'COMMA', 2, 'POINT')}">500.00</td>
+                            <td class="text-right" th:text="'LKR ' + ${#numbers.formatDecimal(b.consultationFee, 1, 'COMMA', 2, 'POINT')}">200.00</td>
+                            <td class="text-right font-weight-600" style="color: var(--primary);" th:text="'LKR ' + ${#numbers.formatDecimal(b.totalAmount, 1, 'COMMA', 2, 'POINT')}">700.00</td>
+                            <td th:text="${#temporals.format(b.billDate, 'yyyy-MM-dd HH:mm')}">2026-08-18 10:00</td>
+                            <td class="action-cell">
+                                <a th:href="@{/bills/receipt/{id}(id=${b.id})}" class="btn btn-xs btn-outline" id="btn-view-receipt">View Receipt</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+</body>
+</html>

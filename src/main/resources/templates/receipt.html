@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Receipt ' + ${bill.billNumber} + ' - Sunrise Dental'">Receipt - Sunrise Dental</title>
+    <meta name="description" content="Official dental treatment receipt from Sunrise Dental Clinic.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1 no-print"></div>
+    <div class="background-glob glob-2 no-print"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="navbar no-print">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/patients" class="nav-link">Patients</a>
+                <a href="/appointments" class="nav-link">Appointments</a>
+            </nav>
+            <div class="user-profile-nav">
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-sm btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="main-content flex-column">
+            <!-- Page Header Actions (Hidden when printing) -->
+            <div class="page-header no-print">
+                <div class="page-header-left">
+                    <h1>Patient Receipt</h1>
+                    <p class="subtitle">Official billing statement &amp; payment summary</p>
+                </div>
+                <div class="page-header-actions">
+                    <a th:href="@{/appointments/{id}(id=${bill.appointmentId})}" class="btn btn-secondary">← Back to Appointment</a>
+                    <button onclick="window.print()" class="btn btn-primary" id="btn-print-receipt">🖨️ Print Receipt</button>
+                </div>
+            </div>
+
+            <!-- Flash Messages (Hidden when printing) -->
+            <div th:if="${successMessage}" class="alert alert-success no-print" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger no-print" th:text="${errorMessage}"></div>
+
+            <!-- Printable Receipt Container -->
+            <div class="glass-card receipt-card">
+                <div class="receipt-header">
+                    <div class="clinic-brand">
+                        <span class="receipt-logo">☀️</span>
+                        <h2>SUNRISE DENTAL CLINIC</h2>
+                    </div>
+                    <div class="receipt-meta">
+                        <span class="receipt-number-label">Receipt / Bill Number</span>
+                        <h3 class="receipt-number-value" th:text="${bill.billNumber}">REC-000001</h3>
+                        <p class="receipt-date" th:text="'Bill Date: ' + ${#temporals.format(bill.billDate, 'dd MMM yyyy, HH:mm')}">Bill Date: 18 Aug 2026</p>
+                    </div>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <div class="receipt-details-grid">
+                    <div class="receipt-section">
+                        <h4>Patient Information</h4>
+                        <p><strong>Name:</strong> <span th:text="${bill.patientName}">John Doe</span></p>
+                        <p><strong>Patient Number:</strong> <span th:text="${bill.patientNumber}">PAT-000001</span></p>
+                    </div>
+
+                    <div class="receipt-section">
+                        <h4>Appointment &amp; Practitioner</h4>
+                        <p><strong>Appointment Number:</strong> <span th:text="${bill.appointmentNumber}">APT-000001</span></p>
+                        <p><strong>Date &amp; Time:</strong> <span th:text="${bill.appointmentDate} + ' at ' + ${bill.appointmentTime}">2026-08-18 at 09:00</span></p>
+                        <p><strong>Attending Dentist:</strong> <span th:text="${bill.dentistName}">Dr. Perera</span></p>
+                    </div>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <!-- Breakdown Table -->
+                <table class="receipt-breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-right">Amount (LKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Treatment Fee:</strong> <span th:text="${bill.treatmentName}">Routine Checkup</span>
+                            </td>
+                            <td class="text-right" th:text="${#numbers.formatDecimal(bill.treatmentCost, 1, 'COMMA', 2, 'POINT')}">500.00</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Consultation Fee</strong>
+                            </td>
+                            <td class="text-right" th:text="${#numbers.formatDecimal(bill.consultationFee, 1, 'COMMA', 2, 'POINT')}">200.00</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td>TOTAL AMOUNT DUE:</td>
+                            <td class="text-right" th:text="'LKR ' + ${#numbers.formatDecimal(bill.totalAmount, 1, 'COMMA', 2, 'POINT')}">LKR 700.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="receipt-footer">
+                    <p>Thank you for choosing Sunrise Dental Clinic!</p>
+                    <p class="receipt-footer-sub">This is a system-generated computer receipt.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer no-print">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+</body>
+</html>
