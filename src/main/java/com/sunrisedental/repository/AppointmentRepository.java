@@ -53,4 +53,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("SELECT MAX(a.id) FROM Appointment a")
     Long findMaxAppointmentId();
+
+    List<Appointment> findByAppointmentDate(LocalDate date);
+
+    List<Appointment> findByAppointmentDateBetween(LocalDate startDate, LocalDate endDate);
 }

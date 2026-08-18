@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treatment Revenue Report - Sunrise Dental Clinic</title>
+    <meta name="description" content="Treatment revenue report for Sunrise Dental Clinic.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="background-glob glob-1"></div>
+    <div class="background-glob glob-2"></div>
+
+    <div class="app-container">
+        <header class="navbar no-print">
+            <div class="logo-container">
+                <span class="logo-icon">☀️</span>
+                <span class="logo-text">Sunrise Dental</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/patients" class="nav-link">Patients</a>
+                <a href="/appointments" class="nav-link">Appointments</a>
+                <a href="/bills" class="nav-link">Billing</a>
+                <a href="/treatments" class="nav-link">Treatments</a>
+                <a href="/reports" class="nav-link active">Reports</a>
+            </nav>
+            <div class="user-profile-nav">
+                <span class="role-pill" sec:authentication="principal.authorities">ROLE</span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-sm btn-logout">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header no-print">
+                <div class="page-header-left">
+                    <h1>Treatment Revenue Report</h1>
+                    <p class="subtitle">Analyze treatment usage and revenue breakdown</p>
+                </div>
+                <div class="page-header-actions">
+                    <a href="/reports" class="btn btn-secondary">← Back to Reports</a>
+                    <button th:if="${reportGenerated}" onclick="window.print()" class="btn btn-primary">🖨️ Print Report</button>
+                </div>
+            </div>
+
+            <!-- Date Range Form -->
+            <div class="glass-card no-print" style="margin-bottom: 1.5rem;">
+                <form method="get" action="/reports/treatments" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="startDate">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control" th:value="${startDate}" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="endDate">End Date</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control" th:value="${endDate}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                </form>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger no-print" th:text="${errorMessage}"></div>
+
+            <!-- Print Header -->
+            <div class="print-only" style="display: none; text-align: center; margin-bottom: 1.5rem;">
+                <h2>☀️ SUNRISE DENTAL CLINIC</h2>
+                <h3>Treatment Revenue Report</h3>
+                <p th:text="'Period: ' + ${startDate} + ' to ' + ${endDate}">Period</p>
+            </div>
+
+            <!-- Report Table -->
+            <div th:if="${reportGenerated}" class="glass-card table-container">
+                <div th:if="${treatmentReport == null || treatmentReport.empty}" style="text-align: center; padding: 3rem 1rem;">
+                    <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🦷</span>
+                    <h3 style="margin-bottom: 0.5rem; font-weight: 600;">No treatment revenue records found.</h3>
+                    <p style="color: var(--text-muted);">Try a different date range.</p>
+                </div>
+
+                <table th:if="${treatmentReport != null && !treatmentReport.empty}" class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Treatment Name</th>
+                            <th class="text-right">Number of Appointments</th>
+                            <th class="text-right">Treatment Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="t : ${treatmentReport}">
+                            <td class="font-weight-600" th:text="${t.treatmentName}">Routine Checkup</td>
+                            <td class="text-right" th:text="${t.numberOfAppointments}">0</td>
+                            <td class="text-right font-weight-600" style="color: var(--primary);" th:text="'LKR ' + ${#numbers.formatDecimal(t.treatmentRevenue, 1, 'COMMA', 2, 'POINT')}">LKR 0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer class="footer no-print">
+            <p>&copy; 2026 Sunrise Dental Management System. Advanced Programming University Project.</p>
+        </footer>
+    </div>
+
+    <style>
+        @media print {
+            .print-only { display: block !important; }
+        }
+    </style>
+</body>
+</html>
